@@ -4,35 +4,37 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 
 
-def createExifTable(img):
+def create_exif_table(img):
     exif_table = {}
     for k, v in img.getexif().items():
         tag = TAGS.get(k)
         exif_table[tag] = v
     return exif_table
 
+
 def sort(argv):
-    formatList = {
+    format_list = {
         '.jpeg': 'Image',
         '.jpg': 'Image',
         '.png': 'Image',
         '.CR2': 'Raw',
 
     }
-    folderToSort = Path('/home/jonathan')
-    folderToSort = folderToSort / sys.argv[1]
+    folder_to_sort = Path('/home/jonathan')
+    folder_to_sort = folder_to_sort / argv[1]
 
-    for f in folderToSort.iterdir():
-        if f.suffix in formatList:
+    for f in folder_to_sort.iterdir():
+        if f.suffix in format_list:
             # Get image to check if exif exist
-            img = Image.open(folderToSort / f.name)
-            if createExifTable(img):
-                output_dir = folderToSort / formatList.get(f.suffix, 'autres')
+            img = Image.open(folder_to_sort / f.name)
+            if create_exif_table(img):
+                output_dir = folder_to_sort / format_list.get(f.suffix, 'autres')
                 output_dir.mkdir(exist_ok=True)
                 f.rename(output_dir / f.name)
             else:
-                output_dir = folderToSort / formatList.get(f.suffix, 'autres') / 'noExif'
+                output_dir = folder_to_sort / format_list.get(f.suffix, 'autres') / 'noExif'
                 output_dir.mkdir(exist_ok=True)
                 f.rename(output_dir / f.name)
+
 
 sort(argv=True)
